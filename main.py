@@ -15,8 +15,9 @@ if __name__ == '__main__':
     train_data = []
     train_labels = []
     test_data = []
+    stop_words_data = []
     #binary classification classes
-    classes = ['pos','neg']
+    classes = ['pos','neg', 'stopwords']
 
     for current in classes:
         dirname = os.path.join(data_dir, current)
@@ -27,26 +28,23 @@ if __name__ == '__main__':
                 if fname.startswith('pos'):
                     train_data.append(content)
                     train_labels.append('positive')
-                # else it belongs to negative category
-                else :
+                #if it belongs to negative category
+                elif fname.startswith('neg') :
                     train_data.append(content)
                     train_labels.append('negative')
+                else:
+                    stop_words_data.append(content)
 
     #CountVectorizer will find the number of occurences of a word in the test data.
     count_vectorizer = CountVectorizer()
     count_vectorizer.fit_transform(train_data)
     vocabulary = count_vectorizer.vocabulary_
 
-    #print the vocabulary
-    print "\n\n===== Vocabulary ===="
-    for key in vocabulary:
-        print key, " : ", vocabulary[key] 
-    print "===== END: Vocabulary ====\n\n"
-    
     # Create feature vectors
     vectorizer = TfidfVectorizer(min_df=1,
                                  max_df = 0.8,
                                  sublinear_tf=True,
+                                 stop_words=stop_words_data,
                                  use_idf=True,decode_error='ignore')
 
     train_vectors = vectorizer.fit_transform(train_data)
@@ -63,6 +61,20 @@ if __name__ == '__main__':
         temp = [sentence]
         execute(temp)
 
+    #tokenize sentence to words
+    def visualizer(sentence):
+        words = sentence.split()
+        for word in words:
+            temp = [word]
+            drawTree(temp)
+    
+    def drawTree (data):
+        for line in data:
+            test_data.append(line);
+            decision = classifier_rbf.decision_function(vectorizer.transform(test_data));
+            print '{} : {} : {}'.format( line.strip('\n'), classifier_rbf.predict(vectorizer.transform(test_data))[0], decision)
+            del test_data[:]
+
     #execute the analyser
     def execute(data):
         for index, line in enumerate(data):
@@ -76,3 +88,5 @@ if __name__ == '__main__':
         readFromFile(sys.argv[2])
     elif len(sys.argv) == 3 and sys.argv[1] == '-s':
         readFromSentence(sys.argv[2])
+    elif len(sys.argv) == 3 and sys.argv[1] == '-v':
+        visualizer(sys.argv[2])
