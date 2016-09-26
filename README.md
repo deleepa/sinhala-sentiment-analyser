@@ -10,11 +10,12 @@ for each of its classification classes
     -numpy 1.11.1
     -scipy 0.18.0
     -scikit-learn 0.17.1
+    -(see requirements.txt for more dependencies)
 
 #### Installation 
 
 ```sh
-$ pip install sklearn 
+$ pip install -r requirements.txt
 ```
 #### Application Usage
 

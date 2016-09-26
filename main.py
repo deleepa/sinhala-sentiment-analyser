@@ -65,6 +65,8 @@ if __name__ == '__main__':
 
     #tokenize sentence to words
     def visualizer(sentence):
+        print "Got sentence: " + sentence
+
         result = [[],[]]
         words = sentence.split()
         for word in words:
